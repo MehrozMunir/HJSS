@@ -23,7 +23,7 @@ public class LearnerRegistration extends JFrame{
     public LearnerRegistration(){
         setContentPane(mainPanel);
         setSize(450,300);
-        setTitle("HJJS");
+        setTitle("HJSS");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         JDateChooser dateChooser = new JDateChooser(); //initializing the calendar jpCalendar.add(dateChooser);
         dateChooser.setSize(new Dimension(30, 50));

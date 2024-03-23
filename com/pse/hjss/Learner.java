@@ -1,10 +1,39 @@
 package com.pse.hjss;
 
-import java.time.LocalDate;
-
 public class Learner {
-    private int ID, emergencyContactNumber, currentGradeLevel;
-    private LocalDate dob;
+
+    public Learner(int ID, String name, int age, String gender, int currentGradeLevel, String emergencyContactNumber){
+        this.ID = ID;
+        this.name = name;
+        this.age = age;
+        this.currentGradeLevel = currentGradeLevel;
+        this.emergencyContactNumber = emergencyContactNumber;
+        this.gender = gender;
+    }
+    private int ID;
+    private String emergencyContactNumber;
+    private int currentGradeLevel;
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    private String gender;
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    private int age;
+   // private LocalDate dob;
     private String name;
 
     public int getID() {
@@ -15,11 +44,11 @@ public class Learner {
         this.ID = ID;
     }
 
-    public int getEmergencyContactNumber() {
+    public String getEmergencyContactNumber() {
         return emergencyContactNumber;
     }
 
-    public void setEmergencyContactNumber(int emergencyContactNumber) {
+    public void setEmergencyContactNumber(String emergencyContactNumber) {
         this.emergencyContactNumber = emergencyContactNumber;
     }
 
@@ -31,19 +60,19 @@ public class Learner {
         this.currentGradeLevel = currentGradeLevel;
     }
 
-    public LocalDate getDob() {
-        return dob;
-    }
-
-    public void setDob(LocalDate dob) {
-        this.dob = dob;
-    }
-
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return("ID: "+ getID()+", Name: "+getName()+", Age: "+getAge()+
+                ", Gender: "+getGender()+
+                ", CurrentGradeLevel: "+getCurrentGradeLevel()+
+                ", Emergency contact number: "+getEmergencyContactNumber());
     }
 }
