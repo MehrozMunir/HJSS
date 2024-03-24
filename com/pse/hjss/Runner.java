@@ -3,6 +3,7 @@ package com.pse.hjss;
 import java.util.Scanner;
 
 public class Runner {
+
     public static void main(String[] args) {
         int id = Manager.generateLearnerID();
         Manager.learnersHashMap.put(id, new Learner(id, "John", 11, "male", 1, "07009090904"));
@@ -10,7 +11,10 @@ public class Runner {
         Manager.learnersHashMap.put(id, new Learner(id, "Sara", 11, "female", 2, "07009090904"));
         id = Manager.generateLearnerID();
         Manager.learnersHashMap.put(id, new Learner(id, "Louis", 11, "male", 4, "07009090904"));
-       // Manager.printLearnersList();
+       //
+        for (int i = 0; i < 20; i++) {
+            System.out.println();
+        }
 
         Scanner scanner = new Scanner(System.in);
 
@@ -33,6 +37,8 @@ public class Runner {
                     scanner.nextLine(); // Wait for Enter key
                     break;
                 case "3":
+                    displayLearnersList();
+                case "4":
                     System.out.println("Exiting the application. Goodbye!");
                     scanner.close();
                     System.exit(0);
@@ -48,7 +54,8 @@ public class Runner {
         System.out.println("Welcome to HJSS");
         System.out.println("1. Register a new learner");
         System.out.println("2. Book a swimming lesson for a learner");
-        System.out.println("3. Exit");
+        System.out.println("3. Display Learners List");
+        System.out.println("4. Exit");
     }
 
     public static void displayLearnerRegistrationMenu() {
@@ -72,5 +79,8 @@ public class Runner {
     public static void displayBookLessonMenu() {
         System.out.println("\nBook a Swimming Lesson");
         // You can prompt for learner details here
+    }
+    public static void displayLearnersList(){
+        Manager.printLearnersList();
     }
 }
