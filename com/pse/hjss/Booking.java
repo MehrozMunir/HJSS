@@ -1,55 +1,42 @@
 package com.pse.hjss;
 
-import java.time.LocalDateTime;
-
 public class Booking {
-    private int bookingID, gradeLevel, availableSeats = 4;
-    private LocalDateTime bookingDateTime;
-    private String coachName;
+    private String bookingID;
+    private int lessonID;
+    private Learner learner;
 
-    public int getBookingID() {
+    public Booking(Learner learner, int lessonID, String bookingID){
+        this.learner = learner;
+        this.lessonID = lessonID;
+        this.bookingID = bookingID;
+    }
+    public String getBookingID() {
         return bookingID;
     }
-
-    public void setBookingID(int bookingID) {
+    public void setBookingID(String bookingID) {
         this.bookingID = bookingID;
     }
 
-    public int getGradeLevel() {
-        return gradeLevel;
+    public int getLessonID() {
+        return lessonID;
     }
 
-    public void setGradeLevel(int gradeLevel) {
-        this.gradeLevel = gradeLevel;
+    public void setLessonID(int lessonID) {
+        this.lessonID = lessonID;
     }
 
-    public int getAvailableSeats() {
-        return availableSeats;
+    public Learner getLearner() {
+        return learner;
     }
 
-    public void decrementAvailableSeats() {
-        this.availableSeats-=1;
+    public void setLearner(Learner learner) {
+        this.learner = learner;
     }
 
-    public LocalDateTime getBookingDateTime() {
-        return bookingDateTime;
-    }
-
-    public void setBookingDataTime(LocalDateTime bookingDataTime) {
-        this.bookingDateTime = bookingDataTime;
-    }
-
-    public String getCoachName() {
-        return coachName;
-    }
-
-    public void setCoachName(String coachName) {
-        this.coachName = coachName;
-    }
     @Override
     public String toString() {
-        return("ID: "+ getBookingID()+", Coach Name: "+getCoachName()+", Date and Time: "+getBookingDateTime()+
-                ", Grade Level: "+getGradeLevel()+
-                ", Available Seats: "+getAvailableSeats());
+        return("Booking ID: "+ getBookingID()+
+                ", lessonID: "+getLessonID()+
+                ", learner: "+ getLearner());
     }
 }
