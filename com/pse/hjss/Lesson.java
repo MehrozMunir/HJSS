@@ -2,6 +2,9 @@ package com.pse.hjss;
 
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.util.Locale;
 
 public class Lesson {
     private int gradeLevel;
@@ -16,15 +19,22 @@ public class Lesson {
     public void decrementAvailableSeats() {
         this.availableSeats -=1;
     }
+    public void incrementAvailableSeats() {
+        this.availableSeats +=1;
+    }
 
     // public final ArrayList<Learner> learnersArrayList = new ArrayList<>();
     //public final ArrayList<Booking> bookingsArrayList = new ArrayList<>();
     private int availableSeats = 4;
-    public Lesson(int lessonID, int gradeLevel, String coachName){
-            this.lessonID = lessonID;
-            this.gradeLevel = gradeLevel;
-            this.coachName = coachName;
-            this.lessonDateTime = LocalDateTime.now();
+    public Lesson(int lessonID, int gradeLevel, String coachName, String dateTime){
+        this.lessonID = lessonID;
+        this.gradeLevel = gradeLevel;
+        this.coachName = coachName;
+        DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+                .parseCaseInsensitive()
+                .appendPattern("E, MMM dd yyyy hh:mm a")
+                .toFormatter(Locale.ENGLISH);
+        this.lessonDateTime = LocalDateTime.parse(dateTime, formatter);
     }
    /* public  boolean addABooking(Learner learner){
         if(this.bookingsArrayList.size()>=4) {
@@ -52,7 +62,12 @@ public class Lesson {
         this.gradeLevel = gradeLevel;
     }
 
-    public LocalDateTime getBookingDateTime() {
+    public String getLessonDateTime() {
+        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("E, MMM dd yyyy hh:mm a");
+        String formattedDate = myFormatObj.format(lessonDateTime);
+        return formattedDate;
+    }
+    public LocalDateTime getLessonDateTimeLDF() {
         return lessonDateTime;
     }
 
@@ -69,8 +84,8 @@ public class Lesson {
     }
     @Override
     public String toString() {
-        return("Lesson ID: "+ getLessonID()+", Coach Name: "+getCoachName()+", Date and Time: "+getBookingDateTime()+
+        return("Lesson ID: "+ getLessonID()+", Coach Name: "+getCoachName()+", Date and Time: "+getLessonDateTime()+
                 ", Grade Level: "+getGradeLevel()+
-                ", Available Seats: "+ (4 - this.getAvailableSeats()));
+                ", Available Seats: "+  this.getAvailableSeats());
     }
 }
