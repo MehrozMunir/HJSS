@@ -149,7 +149,7 @@ public class Runner {
                     Manager.bookALesson(lessonID, learnerID);
                     return;
                 case "4":
-                    Manager.printLessonsList(null, null);
+                    Manager.printLessonsList("", "");
                     // Call function to handle booking a lesson
                     System.out.print("Enter the Lesson ID from the above lessons that you want to book: ");
                     lessonID = scanner.nextInt();
@@ -184,7 +184,7 @@ public class Runner {
         System.out.print("Enter the Booking ID for the booking that you want to change: ");
         String bookingID = scanner.next();
         scanner.nextLine(); // Consume the newline character
-        Manager.printLessonsList(null, null);
+        Manager.printLessonsList("", "");
         System.out.print("Enter the Lesson ID from the above lessons that you want to book now: ");
         int lessonID = scanner.nextInt();
         scanner.nextLine(); // Consume the newline character
@@ -195,7 +195,7 @@ public class Runner {
     }
 
     public static void displayLessonsList() {
-        Manager.printLessonsList(null, null);
+        Manager.printLessonsList("", "");
     }
 
     public static void displayBookingsOfALearner() {
@@ -222,19 +222,19 @@ public class Runner {
         lessonID = Manager.generateLessonID();
         Manager.lessonsHashMap.put(lessonID, new Lesson(lessonID, 3, "Ela", "Wed, May 01 2024 06:00 pm"));
         lessonID = Manager.generateLessonID();
-        Manager.lessonsHashMap.put(lessonID, new Lesson(lessonID, 2, "John", "Mon, Apr 29 2024 06:00 pm"));
+        Manager.lessonsHashMap.put(lessonID, new Lesson(lessonID, 2, "Dave", "Mon, Apr 29 2024 06:00 pm"));
         lessonID = Manager.generateLessonID();
         Manager.lessonsHashMap.put(lessonID, new Lesson(lessonID, 3, "James", "Mon, Apr 29 2024 06:00 pm"));
         lessonID = Manager.generateLessonID();
         Manager.lessonsHashMap.put(lessonID, new Lesson(lessonID, 1, "Ela", "Fri, May 03 2024 06:00 pm"));
         lessonID = Manager.generateLessonID();
-        Manager.lessonsHashMap.put(lessonID, new Lesson(lessonID, 3, "Robert", "Sat, May 04 2024 06:00 pm"));
+        Manager.lessonsHashMap.put(lessonID, new Lesson(lessonID, 3, "Sara", "Sat, May 04 2024 06:00 pm"));
 
     }
 
     public static void readData() {
         try {
-        String filePath = "Learner_Data" + File.separator + "03"+ File.separator + "11001.txt";
+        String filePath = "learner_data" + File.separator + "03"+ File.separator + "11001.txt";
          BufferedReader br = new BufferedReader(new FileReader(filePath));
             String line;
             while ((line = br.readLine()) != null) {
@@ -256,7 +256,7 @@ public class Runner {
         String data = "This is a text inside the file.";
 
         try {
-            String folderName = "Learner_Data"; // Specify your folder name
+            String folderName = "learner_data"; // Specify your folder name
             File folder = new File(folderName);
 
             if (!folder.exists()) {

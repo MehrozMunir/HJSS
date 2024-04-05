@@ -64,7 +64,7 @@ public class Manager {
     }
     public static void printBookingsList(int learnerID){
         try {
-            String filePath = "Learner_Data" + File.separator + "03"+ File.separator + learnerID+".txt";
+            String filePath = "learner_data" + File.separator + "03"+ File.separator + learnerID+".txt";
             BufferedReader br = new BufferedReader(new FileReader(filePath));
             String line;
             while ((line = br.readLine()) != null) {
@@ -105,7 +105,7 @@ public class Manager {
                     ";booking_status#booked;grade_level#"+lesson.getGradeLevel()+";coach_name#"+
                     lesson.getCoachName()+";lesson_id#"+lesson.getLessonID()+";";
             try {
-                String filePath = "Learner_Data" + File.separator + "03"+ File.separator + learnerID+".txt";
+                String filePath = "learner_data" + File.separator + "03"+ File.separator + learnerID+".txt";
                 BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true));
 
                 // Write the new line to the file
@@ -127,7 +127,7 @@ public class Manager {
    public static void cancelBooking( String bookingIdToRemove, String month, String learnerID){
        try {
            // Read the content of the file
-           String filePath = "Learner_Data" + File.separator + month+ File.separator + learnerID+".txt";
+           String filePath = "learner_data" + File.separator + month+ File.separator + learnerID+".txt";
            File inputFile = new File(filePath);
            BufferedReader reader = new BufferedReader(new FileReader(inputFile));
            StringBuilder content = new StringBuilder();
@@ -165,7 +165,7 @@ public class Manager {
         }
         else {
             try {
-                String filePath = "Learner_Data" + File.separator + month + File.separator + learnerID + ".txt";
+                String filePath = "learner_data" + File.separator + month + File.separator + learnerID + ".txt";
                 File inputFile = new File(filePath);
                 BufferedReader reader = new BufferedReader(new FileReader(inputFile));
                 StringBuilder content = new StringBuilder();
