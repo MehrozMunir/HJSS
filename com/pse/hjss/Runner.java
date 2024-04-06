@@ -40,24 +40,30 @@ public class Runner {
                     scanner.nextLine(); // Wait for Enter key
                     break;
                 case "5":
+                    displayAttendASwimmingLessonMenu();
+                    // Call function to change booking a lesson
+                    System.out.println("\nPress Enter to return to the main menu...");
+                    scanner.nextLine(); // Wait for Enter key
+                    break;
+                case "6":
                     System.out.println("List of registered learners!");
                     displayLearnersList();
                     System.out.println("\nPress Enter to return to the main menu...");
                     scanner.nextLine(); // Wait for Enter key
                     break;
-                case "6":
+                case "7":
                     System.out.println("List of All lessons!");
                     displayLessonsList();
                     System.out.println("\nPress Enter to return to the main menu...");
                     scanner.nextLine(); // Wait for Enter key
                     break;
-                case "7":
+                case "8":
                     System.out.println("List of Bookings!");
                     displayBookingsOfALearner();
                     System.out.println("\nPress Enter to return to the main menu...");
                     scanner.nextLine(); // Wait for Enter key
                     break;
-                case "8":
+                case "9":
                     System.out.println("Exiting the application. Goodbye!");
                     scanner.close();
                     System.exit(0);
@@ -74,10 +80,11 @@ public class Runner {
         System.out.println("2. Book a swimming lesson for a learner");
         System.out.println("3. Cancel a swimming lesson for a learner");
         System.out.println("4. Change/Update a swimming lesson for a learner");
-        System.out.println("5. Display Learners List");
-        System.out.println("6. Display Lessons List");
-        System.out.println("7. Display Bookings List");
-        System.out.println("8. Exit");
+        System.out.println("5. Attend a swimming lesson");
+        System.out.println("6. Display Learners List");
+        System.out.println("7. Display Lessons List");
+        System.out.println("8. Display Bookings List");
+        System.out.println("9. Exit");
     }
     public static void displayLessonsViewMenu() {
         System.out.println("How do you want the lessons to be displayed?");
@@ -173,6 +180,20 @@ public class Runner {
         String bookingID = scanner.next();
         scanner.nextLine(); // Consume the newline character
         Manager.cancelBooking(bookingID, "03", ""+learnerID);
+    }
+    public static void displayAttendASwimmingLessonMenu() {
+        System.out.println("\n-----Attend a Swimming Lesson-----");
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter Learner ID:");
+        int learnerID = scanner.nextInt();
+        scanner.nextLine(); // Consume the newline character
+        System.out.print("Enter the Booking ID for the lesson that you want to attend: ");
+        String bookingID = scanner.next();
+        scanner.nextLine(); // Consume the newline character
+        if(!Manager.attendBooking(bookingID, ""+learnerID)){
+            System.out.println("The entered Booking ID and Learner ID does not match.\nTry again by entering a valid learner ID and Booking ID");
+            displayAttendASwimmingLessonMenu();
+        }
     }
 
     public static void displayChangeASwimmingLessonMenu() {

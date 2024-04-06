@@ -5,6 +5,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Manager {
@@ -137,7 +138,7 @@ public class Manager {
                String[] parts = currentLine.split(";");
                // Check if the line contains the booking ID to remove
                if (parts[0].contains("bookingID#" + bookingIdToRemove)) {
-                   parts[2] = "booking_status:cancelled";
+                   parts[2] = "booking_status#cancelled";
                    content.append(parts[0]+";"+parts[1]+";"+parts[2]+";"+
                            parts[3]+";"+parts[4]+";"+parts[5]).append(System.getProperty("line.separator"));
                    String[] keyValue = parts[5].split("#");
@@ -195,6 +196,66 @@ public class Manager {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    public static boolean attendBooking( String bookingId,  String learnerID){
+        boolean isAttended = false;
+        String coachName ="";
+            try {
+                String filePath = "learner_data" + File.separator + "03" + File.separator + learnerID + ".txt";
+                File inputFile = new File(filePath);
+                BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+                StringBuilder content = new StringBuilder();
+                String currentLine;
+                while ((currentLine = reader.readLine()) != null) {
+                    // Split the line by semicolon
+                    String[] parts = currentLine.split(";");
+                    // Check if the line contains the booking ID to remove
+                    if (parts[0].contains("bookingID#" + bookingId)) {
+                        isAttended = true;
+                        parts[2] = "booking_status#attended";
+                        content.append(parts[0]+";"+parts[1]+";"+parts[2]+";"+
+                                parts[3]+";"+parts[4]+";"+parts[5]).append(System.getProperty("line.separator"));
+                        String[] keyValue = parts[4].split("#");
+                        coachName = keyValue[1];
+                    } else {
+                        content.append(currentLine).append(System.getProperty("line.separator"));
+                    }
+                }
+                reader.close();
+                // Write the modified content back to the file
+                BufferedWriter writer = new BufferedWriter(new FileWriter(inputFile));
+                writer.write(content.toString());
+                writer.close();
+                if(isAttended){
+                    System.out.println("Your lesson for Booking ID: " + bookingId + " is attended successfully!");
+                    reviewAndRating(coachName);
+                }
+                return isAttended;
+            } catch (IOException e) {
+                return isAttended;
+            }
+    }
+
+    public static void reviewAndRating(String coachName){
+        try {
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Write a review for the lesson:");
+            String review = scanner.nextLine();
+            System.out.print("Enter a rating for the lesson from 1 to 5: ");
+            int rating = scanner.nextInt();
+            scanner.nextLine(); // Consume the newline character
+            String content = "review#"+review+";rating#"+rating;
+            String filePath = "coach_data" + File.separator + "03"+ File.separator + coachName+".txt";
+            BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true));
+            // Write the new line to the file
+            writer.write(content);
+            writer.newLine(); // Add a newline character after the new line
+            // Close the file
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
