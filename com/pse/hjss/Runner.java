@@ -52,14 +52,14 @@ public class Runner {
                     scanner.nextLine(); // Wait for Enter key
                     break;
                 case "7":
-                    System.out.println("List of All lessons!");
-                    displayLessonsList();
+                    System.out.println("-----Monthly Learner Report-----");
+                    displayMonthlyLearnerReport();
                     System.out.println("\nPress Enter to return to the main menu...");
                     scanner.nextLine(); // Wait for Enter key
                     break;
                 case "8":
-                    System.out.println("List of Bookings!");
-                    displayBookingsOfALearner();
+                    System.out.println("-----Monthly Coach Report-----");
+                    displayMonthlyCoachReport();
                     System.out.println("\nPress Enter to return to the main menu...");
                     scanner.nextLine(); // Wait for Enter key
                     break;
@@ -82,8 +82,8 @@ public class Runner {
         System.out.println("4. Change/Update a swimming lesson for a learner");
         System.out.println("5. Attend a swimming lesson");
         System.out.println("6. Display Learners List");
-        System.out.println("7. Display Lessons List");
-        System.out.println("8. Display Bookings List");
+        System.out.println("7. Monthly Learner Report");
+        System.out.println("8. Monthly Coach Report");
         System.out.println("9. Exit");
     }
     public static void displayLessonsViewMenu() {
@@ -112,60 +112,70 @@ public class Runner {
         Manager.registerLearner(name, age, gender, currentGradeLevel, emergencyContactNumber);
     }
 
-    public static void displayBookASwimmingLessonMenu() {
+    public static void displayBookASwimmingLessonMenu(){
         System.out.println("\n-----Book a Swimming Lesson-----");
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter Learner ID:");
-        int learnerID = scanner.nextInt();
-        scanner.nextLine(); // Consume the newline character
-        int lessonID;
         while (true) {
-           displayLessonsViewMenu();
-            System.out.print("Enter your choice: ");
-            String choice = scanner.nextLine();
-            switch (choice) {
-                case "1":
-                    System.out.print("Enter M for Monday, W for Wednesday, F for Friday, S for Saturday: ");
-                    String selectedDay = scanner.next();
-                    scanner.nextLine(); // Wait for Enter key
-                    Manager.printLessonsList("day", selectedDay);
-                    System.out.print("Enter the Lesson ID from the above lessons that you want to book: ");
-                    lessonID = scanner.nextInt();
-                    scanner.nextLine(); // Consume the newline character
-                    Manager.bookALesson(lessonID, learnerID);
-                    return;
-                case "2":
-                    System.out.print("Enter the grade level for which you want to see the lessons:");
-                    int grade_level = scanner.nextInt();
-                    scanner.nextLine(); // Wait for Enter key
-                    Manager.printLessonsList("grade_level", grade_level+"");
-                    // Call function to handle booking a lesson
-                    System.out.print("Enter the Lesson ID from the above lessons that you want to book: ");
-                    lessonID = scanner.nextInt();
-                    scanner.nextLine(); // Consume the newline character
-                    Manager.bookALesson(lessonID, learnerID);
-                   return;
-                case "3":
-                    System.out.print("Enter the coach name whose lessons you want to see: ");
-                    String coach_name = scanner.nextLine();
-                    Manager.printLessonsList("coach_name", coach_name);
-                    // Call function to handle booking a lesson
-                    System.out.print("Enter the Lesson ID from the above lessons that you want to book: ");
-                    lessonID = scanner.nextInt();
-                    scanner.nextLine(); // Consume the newline character
-                    Manager.bookALesson(lessonID, learnerID);
-                    return;
-                case "4":
-                    Manager.printLessonsList("", "");
-                    // Call function to handle booking a lesson
-                    System.out.print("Enter the Lesson ID from the above lessons that you want to book: ");
-                    lessonID = scanner.nextInt();
-                    scanner.nextLine(); // Consume the newline character
-                    Manager.bookALesson(lessonID, learnerID);
-                    return;
-                default:
-                    System.out.println("Invalid choice. Please enter a valid option.");
-                    break;
+            try {
+                System.out.print("Enter Learner ID:");
+                int learnerID = scanner.nextInt();
+                scanner.nextLine(); // Consume the newline character
+                int lessonID;
+                if(Manager.learnersHashMap.containsKey(learnerID))
+                    displayLessonsViewMenu();
+                else
+                    throw new Utils.CustomValidationException("The learner ID: "+learnerID+" does not exist. Please enter a valid learner ID.");
+                System.out.print("Enter your choice: ");
+                String choice = scanner.nextLine();
+                switch (choice) {
+                    case "1":
+                        System.out.print("Enter M for Monday, W for Wednesday, F for Friday, S for Saturday: ");
+                        String selectedDay = scanner.next();
+                        scanner.nextLine(); // Wait for Enter key
+                        Manager.printLessonsList("day", selectedDay);
+                        System.out.print("Enter the Lesson ID from the above lessons that you want to book: ");
+                        lessonID = scanner.nextInt();
+                        scanner.nextLine(); // Consume the newline character
+                        Manager.bookALesson(lessonID, learnerID);
+                        return;
+                    case "2":
+                        System.out.print("Enter the grade level for which you want to see the lessons:");
+                        int grade_level = scanner.nextInt();
+                        scanner.nextLine(); // Wait for Enter key
+                        Manager.printLessonsList("grade_level", grade_level + "");
+                        // Call function to handle booking a lesson
+                        System.out.print("Enter the Lesson ID from the above lessons that you want to book: ");
+                        lessonID = scanner.nextInt();
+                        scanner.nextLine(); // Consume the newline character
+                        Manager.bookALesson(lessonID, learnerID);
+                        return;
+                    case "3":
+                        System.out.print("Enter the coach name whose lessons you want to see: ");
+                        String coach_name = scanner.nextLine();
+                        Manager.printLessonsList("coach_name", coach_name);
+                        // Call function to handle booking a lesson
+                        System.out.print("Enter the Lesson ID from the above lessons that you want to book: ");
+                        lessonID = scanner.nextInt();
+                        scanner.nextLine(); // Consume the newline character
+                        Manager.bookALesson(lessonID, learnerID);
+                        return;
+                    case "4":
+                        Manager.printLessonsList("", "");
+                        // Call function to handle booking a lesson
+                        System.out.print("Enter the Lesson ID from the above lessons that you want to book: ");
+                        lessonID = scanner.nextInt();
+                        scanner.nextLine(); // Consume the newline character
+                        Manager.bookALesson(lessonID, learnerID);
+                        return;
+                    default:
+                        System.out.println("Invalid choice. Please enter a valid option.");
+                        break;
+                }
+            } catch (Utils.CustomValidationException e){
+                System.out.println(e.getMessage());
+            } catch (Exception e) {
+                System.out.println("Invalid input! Please enter a valid learner ID.");
+                scanner.nextLine(); // Consume the newline character
             }
         }
 
@@ -179,7 +189,15 @@ public class Runner {
         System.out.print("Enter the Booking ID that you want to cancel: ");
         String bookingID = scanner.next();
         scanner.nextLine(); // Consume the newline character
-        Manager.cancelBooking(bookingID, "03", ""+learnerID);
+        // for my application, the lessons for the month of May can only be booked and cancelled
+        if(Manager.cancelBooking(bookingID, "05", ""+learnerID)){
+            System.out.println("Booking with ID: " + bookingID + " is cancelled successfully!");
+        }
+        else{
+            System.out.println("The booking ID: " + bookingID+ "  against the learner: "+learnerID+
+            " is not present.\n Try again and enter the correct learner ID and booking ID.");
+            displayCancelASwimmingLessonMenu();
+        }
     }
     public static void displayAttendASwimmingLessonMenu() {
         System.out.println("\n-----Attend a Swimming Lesson-----");
@@ -209,7 +227,7 @@ public class Runner {
         System.out.print("Enter the Lesson ID from the above lessons that you want to book now: ");
         int lessonID = scanner.nextInt();
         scanner.nextLine(); // Consume the newline character
-        Manager.changeBooking(bookingID, "03", ""+learnerID, lessonID);
+        Manager.changeBooking(bookingID, ""+learnerID, lessonID);
     }
     public static void displayLearnersList() {
         Manager.printLearnersList();
@@ -219,12 +237,25 @@ public class Runner {
         Manager.printLessonsList("", "");
     }
 
-    public static void displayBookingsOfALearner() {
+    public static void displayMonthlyLearnerReport() {
         Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter the month number for the report(e.g., 05 for May): ");
+        int month = scanner.nextInt();
+        scanner.nextLine(); // Consume the newline character
         System.out.print("Enter Learner ID:");
         int learnerID = scanner.nextInt();
         scanner.nextLine(); // Consume the newline character
-        Manager.printBookingsList(learnerID);
+        Manager.printLearnerReport(learnerID, month);
+    }
+    public static void displayMonthlyCoachReport() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter the month number for the report(e.g., 05 for May): ");
+        int month = scanner.nextInt();
+        scanner.nextLine(); // Consume the newline character
+        System.out.print("Enter coach name: ");
+        String coachName = scanner.next();
+        scanner.nextLine(); // Consume the newline character
+        Manager.printCoachReport(coachName, month);
     }
 
     private static void addLearners(){
@@ -243,43 +274,19 @@ public class Runner {
         lessonID = Manager.generateLessonID();
         Manager.lessonsHashMap.put(lessonID, new Lesson(lessonID, 3, "Ela", "Wed, May 01 2024 06:00 pm"));
         lessonID = Manager.generateLessonID();
-        Manager.lessonsHashMap.put(lessonID, new Lesson(lessonID, 2, "Dave", "Mon, Apr 29 2024 06:00 pm"));
+        Manager.lessonsHashMap.put(lessonID, new Lesson(lessonID, 2, "Dave", "Mon, May 06 2024 05:00 pm"));
         lessonID = Manager.generateLessonID();
-        Manager.lessonsHashMap.put(lessonID, new Lesson(lessonID, 3, "James", "Mon, Apr 29 2024 06:00 pm"));
+        Manager.lessonsHashMap.put(lessonID, new Lesson(lessonID, 3, "James", "Mon, May 06 2024 06:00 pm"));
         lessonID = Manager.generateLessonID();
-        Manager.lessonsHashMap.put(lessonID, new Lesson(lessonID, 1, "Ela", "Fri, May 03 2024 06:00 pm"));
+        Manager.lessonsHashMap.put(lessonID, new Lesson(lessonID, 1, "Ela", "Fri, May 03 2024 02:00 pm"));
         lessonID = Manager.generateLessonID();
-        Manager.lessonsHashMap.put(lessonID, new Lesson(lessonID, 3, "Sara", "Sat, May 04 2024 06:00 pm"));
+        Manager.lessonsHashMap.put(lessonID, new Lesson(lessonID, 3, "Sara", "Sat, May 04 2024 03:00 pm"));
 
-    }
-
-    public static void readData() {
-        try {
-        String filePath = "learner_data" + File.separator + "03"+ File.separator + "11001.txt";
-         BufferedReader br = new BufferedReader(new FileReader(filePath));
-            String line;
-            while ((line = br.readLine()) != null) {
-                // Process each booking data
-                String[] parts = line.split(";");
-                for (String part : parts) {
-                    String[] keyValue = part.split(":");
-                    String key = keyValue[0].trim();
-                    String value = keyValue[1].trim();
-                    System.out.println(key + ": " + value);
-                }
-                System.out.println(); // Separate bookings
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
     public static void writeData(){
         String data = "This is a text inside the file.";
-
-        try {
             String folderName = "learner_data"; // Specify your folder name
             File folder = new File(folderName);
-
             if (!folder.exists()) {
                 if (folder.mkdir()) {
                     System.out.println("Folder created successfully!");
@@ -289,21 +296,5 @@ public class Runner {
             } else {
                 System.out.println("Folder already exists.");
             }
-            //String folderPath = "myFolder"; // Specify the folder path
-            String filePath = folderName + File.separator + "output.txt"; // Full path to output.txt
-            // Create a FileWriter to write to the file "output.txt"
-            FileWriter file = new FileWriter(filePath);
-
-            // Create a PrintWriter using the FileWriter
-            PrintWriter output = new PrintWriter(file);
-
-            // Write the data to the file
-            output.print(data);
-
-            // Close the PrintWriter
-            output.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }
