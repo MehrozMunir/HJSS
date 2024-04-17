@@ -1,9 +1,12 @@
 package com.pse.hjss;
 
+import com.pse.hjss.Utils.CustomValidationException;
+
 import java.io.*;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -15,6 +18,7 @@ public class Manager {
     private static final AtomicInteger Booking_ID_GENERATOR = new AtomicInteger(300101);
     public static HashMap<Integer, Learner> learnersHashMap = new HashMap<>();
     public static HashMap<Integer, Lesson> lessonsHashMap = new HashMap<>();
+    public static ArrayList<String> coachesNamesArrayList = new ArrayList<>();
     public static final String bookingMonth ="05";
 
     public static int generateLearnerID() {
@@ -66,57 +70,77 @@ public class Manager {
             }
         }
     }
-    public static void printLearnerReport(int learnerID, int month){
+    public static void printLearnerReport(int month){
         try {
-            String filePath = "learner_data" + File.separator + bookingMonth+ File.separator + learnerID+".txt";
-            BufferedReader br = new BufferedReader(new FileReader(filePath));
-            String line;
-            int booked=0, cancelled=0, attended=0;
-            while ((line = br.readLine()) != null) {
-                // Process each booking data
-                String[] parts = line.split(";");
-                String[] keyValue = parts[5].split("#");
-                Lesson lesson = Manager.lessonsHashMap.get(Integer.parseInt(keyValue[1]));
-                String lessonDateTime = lesson.getLessonDateTime();
-                System.out.println();
-                for (String part : parts) {
-                    keyValue = part.split("#");
-                    String key = keyValue[0].trim();
-                    String value = keyValue[1].trim();
-                    if(key.equals("booking_status") && value.equals("booked"))
-                        booked++;
-                    else if(key.equals("booking_status") && value.equals("cancelled"))
-                        cancelled++;
-                    else if(key.equals("booking_status") && value.equals("attended"))
-                        attended++;
-                    System.out.println(key + ": " + value);
+            for (Learner learner : learnersHashMap.values()) {
+                System.out.println("--------------------------------------------------------------");
+                System.out.println("Learner ID: "+learner.getID()+"   Learner name: "+learner.getName());
+                String filePath = "learner_data" + File.separator + bookingMonth + File.separator + learner.getID() + ".txt";
+                File file = new File(filePath);
+                file.createNewFile();
+                BufferedReader br = new BufferedReader(new FileReader(filePath));
+                String line;
+                int booked = 0, cancelled = 0, attended = 0;
+                while ((line = br.readLine()) != null) {
+                    // Process each booking data
+                    String[] parts = line.split(";");
+                    String[] keyValue = parts[5].split("#");
+                    Lesson lesson = Manager.lessonsHashMap.get(Integer.parseInt(keyValue[1]));
+                    String lessonDateTime = lesson.getLessonDateTime();
+                    System.out.println();
+                    for (String part : parts) {
+                        keyValue = part.split("#");
+                        String key = keyValue[0].trim();
+                        String value = keyValue[1].trim();
+                        if (key.equals("booking_status") && value.equals("booked"))
+                            booked++;
+                        else if (key.equals("booking_status") && value.equals("cancelled"))
+                            cancelled++;
+                        else if (key.equals("booking_status") && value.equals("attended"))
+                            attended++;
+                        System.out.println(key + ": " + value);
+                    }
+                    System.out.println("lesson_date_time" + ": " + lessonDateTime);
                 }
-                System.out.println("lesson_date_time" + ": " + lessonDateTime);
+                System.out.println("\nTotal lessons: "+(attended+booked+cancelled)+"\nbooked = " + booked + "   cancelled = " + cancelled + "   attended = " + attended+"\n");
             }
-            System.out.println("\nTotal lessons:\nbooked = "+booked+"   cancelled = "+cancelled+"   attended = "+attended);
-        } catch (IOException e) {
+            } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static void printCoachReport(String coachName, int month){
+    public static void printCoachReport( int month){
         try {
-            String filePath = "coach_data" + File.separator + bookingMonth+ File.separator + coachName+".txt";
-            BufferedReader br = new BufferedReader(new FileReader(filePath));
-            String line;
-            String content= coachName+" received ratings of ";
-            int numberOfRatings=0, sumOfRatings=0;
-            while ((line = br.readLine()) != null) {
-                // Process each booking data
-                numberOfRatings++;
-                String[] parts = line.split(";");
-                String[] keyValue = parts[1].split("#");
-                content += keyValue[1]+", ";
-                sumOfRatings+= Integer.parseInt(keyValue[1]);
+            for (int i = 0; i < coachesNamesArrayList.size(); i++) {
+                System.out.println("--------------------------------------------------------------");
+                System.out.println("Coach name: "+coachesNamesArrayList.get(i));
+                String filePath = "coach_data" + File.separator + bookingMonth + File.separator + coachesNamesArrayList.get(i) + ".txt";
+                File file = new File(filePath);
+                file.createNewFile();
+                BufferedReader br = new BufferedReader(new FileReader(filePath));
+                String line;
+                StringBuilder content = new StringBuilder(coachesNamesArrayList.get(i) + " received ratings of ");
+                int numberOfRatings = 0, sumOfRatings = 0;
+                while ((line = br.readLine()) != null) {
+                    // Process each booking data
+                    numberOfRatings++;
+                    String[] parts = line.split(";");
+                    String[] keyValue = parts[1].split("#");
+                    content.append(keyValue[1]).append(", ");
+                    sumOfRatings += Integer.parseInt(keyValue[1]);
+                }
+                double averageRating = 0.0;
+                if(numberOfRatings > 0)
+                    averageRating = (sumOfRatings / numberOfRatings);
+                content.deleteCharAt(content.length()-2);
+                content.append("for ").append(numberOfRatings).append(" lessons.\n").append("Average Rating = ").append(averageRating);
+
+                if(numberOfRatings > 0)
+                    System.out.println(content+"\n");
+                else
+                    System.out.println("There are no ratings for "+coachesNamesArrayList.get(i)+" for this month.\n");
             }
-            content+= "and his/her average ratings is "+(sumOfRatings/numberOfRatings);
-            System.out.println(content);
-        } catch (IOException e) {
+        }catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -128,47 +152,59 @@ public class Manager {
     }
     public static void bookALesson( int lessonID, int learnerID){
         Lesson lesson = lessonsHashMap.get(lessonID);
-        if(isLessonAlreadyBooked(learnerID, lesson))
+        Learner learner = learnersHashMap.get(learnerID);
+        String status = isLessonBookedOrAttended(learnerID, lesson);
+        if(status.equals("booked"))
         {
             System.out.println("The lesson with id: "+lessonID+ " is already booked against the learner id: "+learnerID);
-            return;
         }
-        if(lesson.getAvailableSeats()<=0){
-            System.out.println("There are already 4 bookings for this time slot!");
+        else if(status.equals("attended"))
+        {
+            System.out.println("The lesson with id: "+lessonID+ " is already attended against the learner id: "+learnerID);
         }
-        else{
-            String bookingID = generateBookingID();
-            DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("E, MMM dd yyyy hh:mm a");
-            String booking_date_time = myFormatObj.format(LocalDateTime.now());
-            String content = "bookingID#"+bookingID+";booking_date_time#"+booking_date_time+
-                    ";booking_status#booked;grade_level#"+lesson.getGradeLevel()+";coach_name#"+
-                    lesson.getCoachName()+";lesson_id#"+lesson.getLessonID()+";";
-            try {
-                String filePath = "learner_data" + File.separator + lesson.getLessonMonthValue()+ File.separator + learnerID+".txt";
-                BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true));
-
-                // Write the new line to the file
-                writer.write(content);
-                writer.newLine(); // Add a newline character after the new line
-
-                // Close the file
-                writer.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+        else if(status.equals("error"))
+        {
+            System.out.println("There is some error in retrieving the data. Try again!");
+        }
+        else {
+            if(learner.getCurrentGradeLevel() != lesson.getGradeLevel() || (learner.getCurrentGradeLevel()+1) != lesson.getGradeLevel()){
+                System.out.println("The learner can book a lesson only of his/her current grade level"+
+                        " or a grade level +1.");
             }
-            lesson.decrementAvailableSeats();
-            System.out.println("Your booking for the lesson id: "+lessonID+" is booked successfully! "+
-                    "Your booking ID is: "+ bookingID);
+            else if (lesson.getAvailableSeats() <= 0) {
+                System.out.println("There are already 4 bookings for this time slot!");
+            } else {
+                String bookingID = generateBookingID();
+                DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("E, MMM dd yyyy hh:mm a");
+                String booking_date_time = myFormatObj.format(LocalDateTime.now());
+                String content = "bookingID#" + bookingID + ";booking_date_time#" + booking_date_time +
+                        ";booking_status#booked;grade_level#" + lesson.getGradeLevel() + ";coach_name#" +
+                        lesson.getCoachName() + ";lesson_id#" + lesson.getLessonID() + ";";
+                try {
+                    String filePath = "learner_data" + File.separator + lesson.getLessonMonthValue() + File.separator + learnerID + ".txt";
+                    File file = new File(filePath);
+                    file.createNewFile();
+                    BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true));
+                    // Write the new line to the file
+                    writer.write(content);
+                    writer.newLine(); // Add a newline character after the new line
+                    writer.close();
+                } catch (IOException e) {
+                    System.out.println(e.getMessage());
+                }
+                lesson.decrementAvailableSeats();
+                System.out.println("Your booking for the lesson id: " + lessonID + " is booked successfully! " +
+                        "Your booking ID is: " + bookingID);
+            }
         }
-        //System.out.println("Lesson is added successfully!");
     }
-
-   public static boolean cancelBooking( String bookingIdToRemove, String month, String learnerID){
-       boolean cancelled = false;
+   public static String cancelBooking( String bookingIdToRemove, String month, String learnerID){
+       String cancelled = "error";
         try {
            // Read the content of the file
            String filePath = "learner_data" + File.separator + bookingMonth+ File.separator + learnerID+".txt";
            File inputFile = new File(filePath);
+            inputFile.createNewFile();
            BufferedReader reader = new BufferedReader(new FileReader(inputFile));
            StringBuilder content = new StringBuilder();
            String currentLine;
@@ -177,13 +213,18 @@ public class Manager {
                String[] parts = currentLine.split(";");
                // Check if the line contains the booking ID to remove
                if (parts[0].equals("bookingID#" + bookingIdToRemove)) {
-                   parts[2] = "booking_status#cancelled";
-                   content.append(parts[0]+";"+parts[1]+";"+parts[2]+";"+
-                           parts[3]+";"+parts[4]+";"+parts[5]).append(System.getProperty("line.separator"));
-                   String[] keyValue = parts[5].split("#");
-                   Lesson lesson = Manager.lessonsHashMap.get(Integer.parseInt(keyValue[1]));
-                   lesson.incrementAvailableSeats();
-                   cancelled = true;
+                   if(parts[2].equals("booking_status#cancelled")){
+                       cancelled = "already_cancelled";
+                       content.append(currentLine).append(System.getProperty("line.separator"));
+                   }
+                   else {
+                       parts[2] = "booking_status#cancelled";
+                       content.append(parts[0] + ";" + parts[1] + ";" + parts[2] + ";" +
+                               parts[3] + ";" + parts[4] + ";" + parts[5]).append(System.getProperty("line.separator"));
+                       String[] keyValue = parts[5].split("#");
+                       Manager.lessonsHashMap.get(Integer.parseInt(keyValue[1])).incrementAvailableSeats();
+                       cancelled = "cancelled";
+                   }
                }
                else{
                    content.append(currentLine).append(System.getProperty("line.separator"));
@@ -196,19 +237,22 @@ public class Manager {
            writer.close();
            return cancelled;
        } catch (IOException e) {
-           e.printStackTrace();
+            System.out.println(e.getMessage());
            return  cancelled;
        }
    }
-    public static void changeBooking( String bookingId, String learnerID, int lessonID){
+    public static String changeBooking( String bookingId, String learnerID, int lessonID){
+        String changed = "error";
         Lesson lesson = lessonsHashMap.get(lessonID);
         if(lesson.getAvailableSeats()<=0){
-            System.out.println("There are already 4 bookings for this time slot!");
+            changed = "full_booked";
+            return changed;
         }
         else {
             try {
                 String filePath = "learner_data" + File.separator + lesson.getLessonMonthValue() + File.separator + learnerID + ".txt";
                 File inputFile = new File(filePath);
+                inputFile.createNewFile();
                 BufferedReader reader = new BufferedReader(new FileReader(inputFile));
                 StringBuilder content = new StringBuilder();
 
@@ -217,13 +261,20 @@ public class Manager {
                     // Split the line by semicolon
                     String[] parts = currentLine.split(";");
                     // Check if the line contains the booking ID to remove
-                    if (parts[0].equals("bookingID#" + bookingId)) {
-                        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("E, MMM dd yyyy hh:mm a");
-                        String booking_date_time = myFormatObj.format(LocalDateTime.now());
-                        content.append("bookingID#"+bookingId+";booking_date_time#"+booking_date_time+
-                                ";booking_status#booked;grade_level#"+lesson.getGradeLevel()+";coach_name#"+
-                                lesson.getCoachName()+";lesson_id#"+lesson.getLessonID()+";");
-                        lesson.decrementAvailableSeats();
+                    if (parts[0].equals("bookingID#" + bookingId) ) {
+                        if(parts[2].equals("booking_status#cancelled")){
+                            changed="already_cancelled";
+                            content.append(currentLine).append(System.getProperty("line.separator"));
+                        }
+                        else{
+                            DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("E, MMM dd yyyy hh:mm a");
+                            String booking_date_time = myFormatObj.format(LocalDateTime.now());
+                            content.append("bookingID#" + bookingId + ";booking_date_time#" + booking_date_time +
+                                    ";booking_status#booked;grade_level#" + lesson.getGradeLevel() + ";coach_name#" +
+                                    lesson.getCoachName() + ";lesson_id#" + lesson.getLessonID() + ";");
+                            lesson.decrementAvailableSeats();
+                            changed = "updated";
+                        }
                     } else {
                         content.append(currentLine).append(System.getProperty("line.separator"));
                     }
@@ -233,19 +284,21 @@ public class Manager {
                 BufferedWriter writer = new BufferedWriter(new FileWriter(inputFile));
                 writer.write(content.toString());
                 writer.close();
-                System.out.println("Your Booking ID: " + bookingId + " is now updated for the lesson: "+lessonID);
+                return changed;
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println(e.getMessage());
+                return  changed;
             }
         }
     }
 
-    public static boolean attendBooking( String bookingId,  String learnerID){
-        boolean isAttended = false;
+    public static void attendBooking( String bookingId,  String learnerID){
+        String attended = "error";
         String coachName ="";
             try {
                 String filePath = "learner_data" + File.separator + bookingMonth + File.separator + learnerID + ".txt";
                 File inputFile = new File(filePath);
+                inputFile.createNewFile();
                 BufferedReader reader = new BufferedReader(new FileReader(inputFile));
                 StringBuilder content = new StringBuilder();
                 String currentLine;
@@ -254,12 +307,22 @@ public class Manager {
                     String[] parts = currentLine.split(";");
                     // Check if the line contains the booking ID to remove
                     if (parts[0].equals("bookingID#" + bookingId)) {
-                        isAttended = true;
-                        parts[2] = "booking_status#attended";
-                        content.append(parts[0]+";"+parts[1]+";"+parts[2]+";"+
-                                parts[3]+";"+parts[4]+";"+parts[5]).append(System.getProperty("line.separator"));
-                        String[] keyValue = parts[4].split("#");
-                        coachName = keyValue[1];
+                        if(parts[2].equals("booking_status#cancelled")){
+                            attended="cancelled";
+                            content.append(currentLine).append(System.getProperty("line.separator"));
+                        }
+                        else if(parts[2].equals("booking_status#attended")){
+                            attended="already_attended";
+                            content.append(currentLine).append(System.getProperty("line.separator"));
+                        }
+                        else {
+                            attended = "attended";
+                            parts[2] = "booking_status#attended";
+                            content.append(parts[0] + ";" + parts[1] + ";" + parts[2] + ";" +
+                                    parts[3] + ";" + parts[4] + ";" + parts[5]).append(System.getProperty("line.separator"));
+                            String[] keyValue = parts[4].split("#");
+                            coachName = keyValue[1];
+                        }
                     } else {
                         content.append(currentLine).append(System.getProperty("line.separator"));
                     }
@@ -269,42 +332,80 @@ public class Manager {
                 BufferedWriter writer = new BufferedWriter(new FileWriter(inputFile));
                 writer.write(content.toString());
                 writer.close();
-                if(isAttended){
+                if(attended.equals("attended")){
                     System.out.println("Your lesson for Booking ID: " + bookingId + " is attended successfully!");
                     reviewAndRating(coachName);
                 }
-                return isAttended;
+                else if(attended.equals("cancelled")){
+                    System.out.println("The Booking ID: "+ bookingId+" was cancelled." +
+                            "\nYou can't attend a lesson that was cancelled.\nTry again if you want to attend a different lesson.");
+                    Runner.displayAttendASwimmingLessonMenu();
+                }
+                else if(attended.equals("already_attended")){
+                    System.out.println("The Booking ID: "+ bookingId+" is already attended." +
+                            "\nYou can't attend a lesson that is already attended.\nTry again if you want to attend a different booking.");
+                    Runner.displayAttendASwimmingLessonMenu();
+                }
+                else {
+                    System.out.println("The entered Booking ID and Learner ID does not match.\nTry again by entering a valid Learner ID and Booking ID.");
+                    Runner.displayAttendASwimmingLessonMenu();
+                }
             } catch (IOException e) {
-                return isAttended;
+                System.out.println("The entered Booking ID and Learner ID does not match.\nTry again by entering a valid Learner ID and Booking ID.");
+                Runner.displayAttendASwimmingLessonMenu();
             }
     }
 
     public static void reviewAndRating(String coachName){
-        try {
-            Scanner scanner = new Scanner(System.in);
-            System.out.println("Write a review for the lesson:");
-            String review = scanner.nextLine();
-            System.out.print("Enter a rating for the lesson from 1 to 5: ");
-            int rating = scanner.nextInt();
-            scanner.nextLine(); // Consume the newline character
-            String content = "review#"+review+";rating#"+rating;
-            String filePath = "coach_data" + File.separator + "05"+ File.separator + coachName+".txt";
-            BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true));
-            // Write the new line to the file
-            writer.write(content);
-            writer.newLine(); // Add a newline character after the new line
-            // Close the file
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        Scanner scanner = new Scanner(System.in);
+        while(true) {
+            try {
+                System.out.println("Write a review for the lesson:");
+                String review = scanner.nextLine();
+                while(true) {
+                    try {
+                        System.out.print("Enter a rating for the lesson from 1 to 5: ");
+                        int rating = scanner.nextInt();
+                        scanner.nextLine(); // Consume the newline character
+                        if (rating <= 5 && rating >= 1) {
+                            String content = "review#" + review + ";rating#" + rating;
+                            String filePath = "coach_data" + File.separator + "05" + File.separator + coachName + ".txt";
+                            File file = new File(filePath);
+                            file.createNewFile();
+                            BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true));
+                            // Write the new line to the file
+                            writer.write(content);
+                            writer.newLine(); // Add a newline character after the new line
+                            // Close the file
+                            writer.close();
+                            System.out.println("The review and rating for the lesson is recorded.");
+                            return;
+                        } else {
+                            throw new CustomValidationException("Rating can only be a number between 1 and 5." +
+                                    "\nTry again by entering the correct review and rating.");
+                        }
+                    } catch (CustomValidationException e) {
+                        System.out.println(e.getMessage());
+                    }
+                    catch (Exception e) {
+                        System.out.println("Invalid input! Please enter a valid value.");
+                        scanner.nextLine(); // Consume the newline character
+                    }
+                }
+
+            } catch (Exception e) {
+                System.out.println("Invalid input! Please enter a valid value.");
+                scanner.nextLine(); // Consume the newline character
+            }
         }
     }
-    public static boolean isLessonAlreadyBooked(int learnerID, Lesson lesson) {
+    public static String isLessonBookedOrAttended(int learnerID, Lesson lesson) {
         try {
             LocalDateTime lessonDateTime = lesson.getLessonDateTimeLDF();
             int month =   lessonDateTime.getMonthValue();
             String filePath = "learner_data" + File.separator + lesson.getLessonMonthValue() + File.separator + learnerID + ".txt";
             File inputFile = new File(filePath);
+            inputFile.createNewFile();
             BufferedReader reader = new BufferedReader(new FileReader(inputFile));
 
             String currentLine;
@@ -312,15 +413,18 @@ public class Manager {
                 // Split the line by semicolon
                 String[] parts = currentLine.split(";");
                 // Check if the line contains the booking ID to remove
-                if (parts[5].equals("lesson_id#" + lesson.getLessonID()) && !parts[2].equals("booking_status#cancelled")) {
-                    return true;
+                if (parts[5].equals("lesson_id#" + lesson.getLessonID()) && parts[2].equals("booking_status#booked")) {
+                    return "booked";
+                }
+                else if (parts[5].equals("lesson_id#" + lesson.getLessonID()) && parts[2].equals("booking_status#attended")) {
+                    return "attended";
                 }
             }
             reader.close();
-            return  false;
+            return  "not_booked";
         } catch (IOException e) {
-            System.out.println("Invalid input! Please enter a valid learner ID.");
-            return true;
+            System.out.println(e.getMessage());
+            return "error";
         }
     }
 }

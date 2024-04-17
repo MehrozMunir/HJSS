@@ -91,6 +91,5 @@ public class Lesson {
     public String getLessonMonthValue(){
         LocalDateTime lessonDateTime = this.getLessonDateTimeLDF();
         return String.format("%02d",lessonDateTime.getMonthValue());
-
     }
 }
