@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.*;
 
 public class Manager {
     //Initialising the learnerID with a seven-digit number
@@ -72,9 +73,12 @@ public class Manager {
     }
     public static void printLearnerReport(int month){
         try {
-            for (Learner learner : learnersHashMap.values()) {
+            TreeMap<Integer, Learner> sortedMap = new TreeMap<>(learnersHashMap);
+            for (Map.Entry<Integer, Learner> entry : sortedMap.entrySet()) {
+                Learner learner = entry.getValue();
                 System.out.println("--------------------------------------------------------------");
                 System.out.println("Learner ID: "+learner.getID()+"   Learner name: "+learner.getName());
+                System.out.println("Current grade level: "+learner.getCurrentGradeLevel()+"    Emergency contact number: "+learner.getEmergencyContactNumber());
                 String filePath = "learner_data" + File.separator + bookingMonth + File.separator + learner.getID() + ".txt";
                 File file = new File(filePath);
                 file.createNewFile();
@@ -150,29 +154,30 @@ public class Manager {
             learnersHashMap.put(id, new Learner(id, name, age, gender, currentGradeLevel, emergencyContactNumber));
             System.out.println("Learner is added successfully!");
     }
-    public static void bookALesson( int lessonID, int learnerID){
+    public static boolean bookALesson( int lessonID, int learnerID){
+        boolean booked = false;
         Lesson lesson = lessonsHashMap.get(lessonID);
         Learner learner = learnersHashMap.get(learnerID);
         String status = isLessonBookedOrAttended(learnerID, lesson);
         if(status.equals("booked"))
         {
-            System.out.println("The lesson with id: "+lessonID+ " is already booked against the learner id: "+learnerID);
+            System.out.println("\nThe lesson with id: "+lessonID+ " is already booked against the learner id: "+learnerID);
         }
         else if(status.equals("attended"))
         {
-            System.out.println("The lesson with id: "+lessonID+ " is already attended against the learner id: "+learnerID);
+            System.out.println("\nThe lesson with id: "+lessonID+ " is already attended against the learner id: "+learnerID);
         }
         else if(status.equals("error"))
         {
-            System.out.println("There is some error in retrieving the data. Try again!");
+            System.out.println("\nThere is some error in retrieving the data. Try again!");
         }
         else {
-            if(learner.getCurrentGradeLevel() != lesson.getGradeLevel() || (learner.getCurrentGradeLevel()+1) != lesson.getGradeLevel()){
-                System.out.println("The learner can book a lesson only of his/her current grade level"+
+            if(learner.getCurrentGradeLevel() != lesson.getGradeLevel() && (learner.getCurrentGradeLevel()+1) != lesson.getGradeLevel()){
+                System.out.println("\nThe learner can book a lesson only of his/her current grade level"+
                         " or a grade level +1.");
             }
             else if (lesson.getAvailableSeats() <= 0) {
-                System.out.println("There are already 4 bookings for this time slot!");
+                System.out.println("\nThere are already 4 bookings for this time slot!");
             } else {
                 String bookingID = generateBookingID();
                 DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("E, MMM dd yyyy hh:mm a");
@@ -189,14 +194,17 @@ public class Manager {
                     writer.write(content);
                     writer.newLine(); // Add a newline character after the new line
                     writer.close();
+                    booked = true;
                 } catch (IOException e) {
                     System.out.println(e.getMessage());
                 }
                 lesson.decrementAvailableSeats();
-                System.out.println("Your booking for the lesson id: " + lessonID + " is booked successfully! " +
+                System.out.println("\nYour booking for the lesson id: " + lessonID + " is booked successfully! " +
                         "Your booking ID is: " + bookingID);
+
             }
         }
+        return booked;
     }
    public static String cancelBooking( String bookingIdToRemove, String month, String learnerID){
        String cancelled = "error";
@@ -294,7 +302,8 @@ public class Manager {
 
     public static void attendBooking( String bookingId,  String learnerID){
         String attended = "error";
-        String coachName ="";
+        String coachName =""; int lessonGradeLevel =0;
+        Learner learner = Manager.learnersHashMap.get(Integer.parseInt(learnerID));
             try {
                 String filePath = "learner_data" + File.separator + bookingMonth + File.separator + learnerID + ".txt";
                 File inputFile = new File(filePath);
@@ -322,6 +331,8 @@ public class Manager {
                                     parts[3] + ";" + parts[4] + ";" + parts[5]).append(System.getProperty("line.separator"));
                             String[] keyValue = parts[4].split("#");
                             coachName = keyValue[1];
+                            keyValue = parts[3].split("#");
+                            lessonGradeLevel = Integer.parseInt(keyValue[1]);
                         }
                     } else {
                         content.append(currentLine).append(System.getProperty("line.separator"));
@@ -334,6 +345,10 @@ public class Manager {
                 writer.close();
                 if(attended.equals("attended")){
                     System.out.println("Your lesson for Booking ID: " + bookingId + " is attended successfully!");
+                    if(learner.getCurrentGradeLevel() < lessonGradeLevel) {
+                        learner.upGrade();
+                        cancelBelowLevelLessons(learner.getID(), learner.getCurrentGradeLevel() - 1);
+                    }
                     reviewAndRating(coachName);
                 }
                 else if(attended.equals("cancelled")){
@@ -425,6 +440,42 @@ public class Manager {
         } catch (IOException e) {
             System.out.println(e.getMessage());
             return "error";
+        }
+    }
+
+    public static void cancelBelowLevelLessons(int learnerID, int learnerPreviousGradeLevel){
+        try {
+            // Read the content of the file
+            String filePath = "learner_data" + File.separator + bookingMonth+ File.separator + learnerID+".txt";
+            File inputFile = new File(filePath);
+            inputFile.createNewFile();
+            BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+            StringBuilder content = new StringBuilder();
+            String currentLine;
+            while ((currentLine = reader.readLine()) != null) {
+
+                String[] parts = currentLine.split(";");
+                String[] keyValue = parts[3].split("#");
+                int lessonGradeLevel = Integer.parseInt(keyValue[1]);
+
+                if (parts[2].equals("booking_status#booked") && lessonGradeLevel == learnerPreviousGradeLevel) {
+                        parts[2] = "booking_status#cancelled";
+                        content.append(parts[0] + ";" + parts[1] + ";" + parts[2] + ";" +
+                                parts[3] + ";" + parts[4] + ";" + parts[5]).append(System.getProperty("line.separator"));
+                        keyValue = parts[5].split("#");
+                        Manager.lessonsHashMap.get(Integer.parseInt(keyValue[1])).incrementAvailableSeats();
+                }
+                else{
+                    content.append(currentLine).append(System.getProperty("line.separator"));
+                }
+            }
+            reader.close();
+            // Write the modified content back to the file
+            BufferedWriter writer = new BufferedWriter(new FileWriter(inputFile));
+            writer.write(content.toString());
+            writer.close();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
         }
     }
 }

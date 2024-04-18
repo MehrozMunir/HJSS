@@ -142,8 +142,11 @@ public class Runner {
                                 lessonID = scanner.nextInt();
                                 scanner.nextLine(); // Consume the newline character
                                 if(Manager.lessonsHashMap.containsKey(lessonID)) {
-                                    Manager.bookALesson(lessonID, learnerID);
-                                    return;
+                                    boolean booked = Manager.bookALesson(lessonID, learnerID);
+                                    if(booked)
+                                        return;
+                                    else
+                                        throw new Utils.CustomValidationException("Try again!.");
                                 }
                                 else{
                                     throw new Utils.CustomValidationException("Enter a valid lesson ID.");

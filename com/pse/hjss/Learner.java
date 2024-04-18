@@ -59,6 +59,9 @@ public class Learner {
     public void setCurrentGradeLevel(int currentGradeLevel) {
         this.currentGradeLevel = currentGradeLevel;
     }
+    public void upGrade(){
+        this.currentGradeLevel +=1;
+    }
 
     public String getName() {
         return name;
