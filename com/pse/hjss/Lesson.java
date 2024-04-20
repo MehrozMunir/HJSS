@@ -64,8 +64,7 @@ public class Lesson {
 
     public String getLessonDateTime() {
         DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("E, MMM dd yyyy hh:mm a");
-        String formattedDate = myFormatObj.format(lessonDateTime);
-        return formattedDate;
+        return myFormatObj.format(lessonDateTime);
     }
     public LocalDateTime getLessonDateTimeLDF() {
         return lessonDateTime;
