@@ -2,9 +2,10 @@ package com.pse.hjss;
 
 public class Learner {
 
-    public Learner(int ID, String name, int age, String gender, int currentGradeLevel, String emergencyContactNumber){
+    public Learner(int ID, String firstName, String lastName, int age, String gender, int currentGradeLevel, String emergencyContactNumber){
         this.ID = ID;
-        this.name = name;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.age = age;
         this.currentGradeLevel = currentGradeLevel;
         this.emergencyContactNumber = emergencyContactNumber;
@@ -34,7 +35,17 @@ public class Learner {
 
     private int age;
    // private LocalDate dob;
-    private String name;
+    private String firstName;
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    private String lastName;
 
     public int getID() {
         return ID;
@@ -63,19 +74,19 @@ public class Learner {
         this.currentGradeLevel +=1;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     @Override
     public String toString() {
-        return("ID: "+ getID()+", Name: "+getName()+", Age: "+getAge()+
+        return("ID: "+ getID()+", Name: "+getFirstName()+ " "+ getLastName()+", Age: "+getAge()+
                 ", Gender: "+getGender()+
                 ", CurrentGradeLevel: "+getCurrentGradeLevel()+
                 ", Emergency contact number: "+getEmergencyContactNumber());
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 }
