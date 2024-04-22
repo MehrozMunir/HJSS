@@ -1,0 +1,4 @@
+booking_id#B300113;booking_date_time#Fri, Apr 19 2024 03:33 pm;booking_status#attended;grade_level#1;coach_name#Sara;lesson_id#20103
+booking_id#B300114;booking_date_time#Fri, Apr 19 2024 03:34 pm;booking_status#attended;grade_level#1;coach_name#Sara;lesson_id#20107
+booking_id#B300115;booking_date_time#Fri, Apr 19 2024 03:34 pm;booking_status#attended;grade_level#1;coach_name#Sara;lesson_id#20114
+booking_id#B300116;booking_date_time#Fri, Apr 19 2024 03:34 pm;booking_status#booked;grade_level#1;coach_name#Sara;lesson_id#20118;

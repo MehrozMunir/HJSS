@@ -52,7 +52,7 @@ public class Lesson {
     }
     @Override
     public String toString() {
-        return("Lesson ID: "+ getLessonID()+", Coach Name: "+getCoachName()+", Date and Time: "+getLessonDateTime()+
+        return("\nLesson ID: "+ getLessonID()+", Coach Name: "+getCoachName()+", Date and Time: "+getLessonDateTime()+
                 ", Grade Level: "+getGradeLevel()+
                 ", Available Seats: "+  this.getAvailableSeats());
     }

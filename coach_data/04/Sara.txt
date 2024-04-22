@@ -1,0 +1,10 @@
+review#Nice;rating#4
+review#Awesome;rating#5
+review#Great;rating#4
+review#Wow;rating#4
+review#Wow;rating#5
+review#Awesome;rating#4
+review#Not bad;rating#4
+review#Awesome;rating#5
+review#Great;rating#4
+review#Poor;rating#3

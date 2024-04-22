@@ -1,0 +1,16 @@
+review#Good;rating#3
+review#Wow!;rating#3
+review#Poor;rating#1
+review#Nice;rating#4
+review#Great;rating#5
+review#Good;rating#4
+review#Poor;rating#2
+review#Great;rating#5
+review#Hmm;rating#3
+review#Great man;rating#5
+review#Poor;rating#3
+review#Wow;rating#5
+review#Awesome;rating#4
+review#Wow;rating#4
+review#Good;rating#5
+review#Poor;rating#2

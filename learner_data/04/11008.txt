@@ -1,0 +1,4 @@
+booking_id#B300129;booking_date_time#Fri, Apr 19 2024 03:39 pm;booking_status#attended;grade_level#4;coach_name#James;lesson_id#20119
+booking_id#B300130;booking_date_time#Fri, Apr 19 2024 03:40 pm;booking_status#attended;grade_level#4;coach_name#Dave;lesson_id#20132
+booking_id#B300131;booking_date_time#Fri, Apr 19 2024 03:40 pm;booking_status#attended;grade_level#4;coach_name#Dave;lesson_id#20121
+booking_id#B300132;booking_date_time#Fri, Apr 19 2024 03:41 pm;booking_status#attended;grade_level#4;coach_name#James;lesson_id#20130

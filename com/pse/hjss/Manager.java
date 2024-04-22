@@ -283,24 +283,26 @@ public class Manager {
                                 changed = "already_cancelled";
                                 content.append(currentLine).append(System.lineSeparator());
                             }
-                            case "booking_status#booked" -> {
-                                changed = "already_booked";
-                                content.append(currentLine).append(System.lineSeparator());
-                            }
                             case "booking_status#attended" -> {
                                 changed = "already_attended";
                                 content.append(currentLine).append(System.lineSeparator());
                             }
                             default -> {
-                                DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("E, MMM dd yyyy hh:mm a");
-                                String booking_date_time = myFormatObj.format(LocalDateTime.now());
-                                content.append("booking_id#").append(bookingId).append(";booking_date_time#").
-                                        append(booking_date_time).append(";booking_status#booked;grade_level#").
-                                        append(lesson.getGradeLevel()).append(";coach_name#").
-                                        append(lesson.getCoachName()).append(";lesson_id#").append(lesson.getLessonID()).
-                                        append(";").append(System.lineSeparator());
-                                lesson.decrementAvailableSeats();
-                                changed = "updated";
+                                if(parts[2].equals("booking_status#booked") && parts[5].equals("lesson_id#" + lessonID)){
+                                    changed = "already_booked";
+                                    content.append(currentLine).append(System.lineSeparator());
+                                }
+                                else {
+                                    DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("E, MMM dd yyyy hh:mm a");
+                                    String booking_date_time = myFormatObj.format(LocalDateTime.now());
+                                    content.append("booking_id#").append(bookingId).append(";booking_date_time#").
+                                            append(booking_date_time).append(";booking_status#booked;grade_level#").
+                                            append(lesson.getGradeLevel()).append(";coach_name#").
+                                            append(lesson.getCoachName()).append(";lesson_id#").append(lesson.getLessonID()).
+                                            append(";").append(System.lineSeparator());
+                                    lesson.decrementAvailableSeats();
+                                    changed = "updated";
+                                }
                             }
                         }
                     } else {

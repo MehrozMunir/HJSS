@@ -5,8 +5,8 @@ import java.util.Scanner;
 public class Runner {
     public static void main(String[] args) {
         AddLearnersLessons.addLearners();
-        AddLearnersLessons.addLessons();
         AddLearnersLessons.addCoaches();
+        AddLearnersLessons.addLessons();
         Utils.initializeFoldersAndFiles();
         Scanner scanner = new Scanner(System.in);
         while (true) {
