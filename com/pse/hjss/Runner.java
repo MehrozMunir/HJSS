@@ -2,6 +2,8 @@ package com.pse.hjss;
 
 import java.util.Scanner;
 
+import static com.pse.hjss.Manager.getManagerInstance;
+
 public class Runner {
     public static void main(String[] args) {
         AddLearnersLessons.addLearners();
@@ -53,7 +55,7 @@ public class Runner {
                     break;
                 case "7":
                     System.out.println(Utils.ANSI_BOLD+"List of all Lessons!"+Utils.ANSI_RESET);
-                    Manager.printLessonsList("","");
+                    getManagerInstance().printLessonsList("","");
                     System.out.println("\nPress Enter to return to the main menu...");
                     scanner.nextLine(); // Wait for Enter key
                     break;
@@ -115,7 +117,7 @@ public class Runner {
                     throw new Utils.CustomValidationException("Current grade level can only be between 0 and 5.\nTry again!");
                 System.out.print("Enter Learner's Emergency Contact Number: ");
                 emergencyContactNumber = scanner.nextLine();
-                Manager.registerLearner(firstName, lastName, age, gender, currentGradeLevel, emergencyContactNumber);
+                getManagerInstance().registerLearner(firstName, lastName, age, gender, currentGradeLevel, emergencyContactNumber);
                 return;
             }
             catch (Utils.CustomValidationException e){
@@ -139,7 +141,7 @@ public class Runner {
                 if(learnerID == 0)
                     return;
                 int lessonID;
-                if(Manager.learnersHashMap.containsKey(learnerID))
+                if(getManagerInstance().learnersHashMap.containsKey(learnerID))
                     Utils.displayLessonsViewMenu();
                 else
                     throw new Utils.CustomValidationException("The learner ID: "+learnerID+" does not exist. Please enter a valid learner ID.");
@@ -152,12 +154,12 @@ public class Runner {
                             scanner.nextLine(); // Wait for Enter key
                             if (selectedDay.equalsIgnoreCase("m") || selectedDay.equalsIgnoreCase("w")
                                     || selectedDay.equalsIgnoreCase("f") || selectedDay.equalsIgnoreCase("s")){
-                                Manager.printLessonsList("day", selectedDay);
+                                getManagerInstance().printLessonsList("day", selectedDay);
                                 System.out.print("Enter the Lesson ID from the above lessons that you want to book: ");
                                 lessonID = scanner.nextInt();
                                 scanner.nextLine(); // Consume the newline character
-                                if(Manager.lessonsHashMap.containsKey(lessonID)) {
-                                    boolean booked = Manager.bookALesson(lessonID, learnerID);
+                                if(getManagerInstance().lessonsHashMap.containsKey(lessonID)) {
+                                    boolean booked = getManagerInstance().bookALesson(lessonID, learnerID);
                                     if(booked)
                                         throw new Utils.CustomValidationException(Utils.ANSI_RESET+"If you want to book another lesson, carry on!");
                                     else
@@ -176,13 +178,13 @@ public class Runner {
                         scanner.nextLine(); // Wait for Enter key
                         if (grade_level == 1 || grade_level == 2
                                 || grade_level == 3 || grade_level == 4 || grade_level == 5){
-                            Manager.printLessonsList("grade_level", grade_level + "");
+                            getManagerInstance().printLessonsList("grade_level", grade_level + "");
                             // Call function to handle booking a lesson
                             System.out.print("Enter the Lesson ID from the above lessons that you want to book: ");
                             lessonID = scanner.nextInt();
                             scanner.nextLine(); // Consume the newline character
-                            if(Manager.lessonsHashMap.containsKey(lessonID)) {
-                                boolean booked = Manager.bookALesson(lessonID, learnerID);
+                            if(getManagerInstance().lessonsHashMap.containsKey(lessonID)) {
+                                boolean booked = getManagerInstance().bookALesson(lessonID, learnerID);
                                 if(booked)
                                     throw new Utils.CustomValidationException(Utils.ANSI_RESET+"If you want to book another lesson, carry on!");
                                 else
@@ -199,14 +201,14 @@ public class Runner {
                         System.out.print("Enter the coach name whose lessons you want to see: ");
                         String coach_name1 = scanner.nextLine();
                         String coach_name = coach_name1.substring(0, 1).toUpperCase() + coach_name1.substring(1).toLowerCase();
-                        if(Manager.coachesNamesArrayList.contains(coach_name)) {
-                            Manager.printLessonsList("coach_name", coach_name);
+                        if(getManagerInstance().coachesNamesArrayList.contains(coach_name)) {
+                            getManagerInstance().printLessonsList("coach_name", coach_name);
                             // Call function to handle booking a lesson
                             System.out.print("Enter the Lesson ID from the above lessons that you want to book: ");
                             lessonID = scanner.nextInt();
                             scanner.nextLine(); // Consume the newline character
-                            if(Manager.lessonsHashMap.containsKey(lessonID)) {
-                                boolean booked = Manager.bookALesson(lessonID, learnerID);
+                            if(getManagerInstance().lessonsHashMap.containsKey(lessonID)) {
+                                boolean booked = getManagerInstance().bookALesson(lessonID, learnerID);
                                 if(booked)
                                     throw new Utils.CustomValidationException(Utils.ANSI_RESET+"If you want to book another lesson, carry on!");
                                 else
@@ -220,13 +222,13 @@ public class Runner {
                             throw new Utils.CustomValidationException("The coach name entered does not exist.");
                         }
                     case "4":
-                        Manager.printLessonsList("", "");
+                        getManagerInstance().printLessonsList("", "");
                         // Call function to handle booking a lesson
                         System.out.print("Enter the Lesson ID from the above lessons that you want to book: ");
                         lessonID = scanner.nextInt();
                         scanner.nextLine(); // Consume the newline character
-                        if(Manager.lessonsHashMap.containsKey(lessonID)) {
-                            boolean booked = Manager.bookALesson(lessonID, learnerID);
+                        if(getManagerInstance().lessonsHashMap.containsKey(lessonID)) {
+                            boolean booked = getManagerInstance().bookALesson(lessonID, learnerID);
                             if(booked)
                                 throw new Utils.CustomValidationException(Utils.ANSI_RESET+"If you want to book another lesson, carry on!");
                             else
@@ -259,13 +261,13 @@ public class Runner {
                 scanner.nextLine(); // Consume the newline character
                 if(learnerID == 0)
                     return;
-                if (!Manager.learnersHashMap.containsKey(learnerID))
+                if (!getManagerInstance().learnersHashMap.containsKey(learnerID))
                     throw new Utils.CustomValidationException("The entered learner ID does not exist, try again.");
                 System.out.print("Enter the Booking ID that you want to cancel, e.g. B300101: ");
                 String bookingID = scanner.next();
                 scanner.nextLine(); // Consume the newline character
                 // for my application, the lessons for the month of May can only be booked and cancelled
-                String cancelled = Manager.cancelBooking(bookingID, "" + learnerID);
+                String cancelled = getManagerInstance().cancelBooking(bookingID, "" + learnerID);
                 switch (cancelled) {
                     case "cancelled" -> {
                         System.out.println(Utils.ANSI_GREEN + "The lesson with Booking ID: " + bookingID + " is cancelled successfully!" + Utils.ANSI_RESET);
@@ -306,13 +308,12 @@ public class Runner {
                 scanner.nextLine(); // Consume the newline character
                 if(learnerID == 0)
                     return;
-                if (!Manager.learnersHashMap.containsKey(learnerID))
+                if (!getManagerInstance().learnersHashMap.containsKey(learnerID))
                     throw new Utils.CustomValidationException("The entered learner ID does not exist, try again.\n");
                 System.out.print("Enter the Booking ID, e.g. B300101, for the lesson that you want to attend: ");
                 String bookingID = scanner.next();
                 scanner.nextLine(); // Consume the newline character
-                scanner.close();
-                Manager.attendBooking(bookingID, "" + learnerID);
+                getManagerInstance().attendBooking(bookingID, "" + learnerID);
             } catch (Utils.CustomValidationException e) {
                 System.out.println(e.getMessage());
             } catch (Exception e) {
@@ -332,18 +333,18 @@ public class Runner {
                 scanner.nextLine(); // Consume the newline character
                 if(learnerID == 0)
                     return;
-                if (!Manager.learnersHashMap.containsKey(learnerID))
+                if (!getManagerInstance().learnersHashMap.containsKey(learnerID))
                     throw new Utils.CustomValidationException("The entered learner ID does not exist, try again.\n");
                 System.out.print("Enter the Booking ID, e.g. B300101, for the booking that you want to change: ");
                 String bookingID = scanner.next();
                 scanner.nextLine(); // Consume the newline character
-                Manager.printLessonsList("", "");
+                getManagerInstance().printLessonsList("", "");
                 System.out.print("Enter the Lesson ID from the above lessons that you want to book now: ");
                 int lessonID = scanner.nextInt();
                 scanner.nextLine(); // Consume the newline character
-                if(!Manager.lessonsHashMap.containsKey(lessonID))
+                if(!getManagerInstance().lessonsHashMap.containsKey(lessonID))
                     throw new Utils.CustomValidationException("The entered learner ID does not exist, try again.\n");
-                String output = Manager.changeBooking(bookingID, "" + learnerID, lessonID);
+                String output = getManagerInstance().changeBooking(bookingID, "" + learnerID, lessonID);
                 switch (output) {
                     case "updated" ->
                             System.out.println(Utils.ANSI_GREEN + "Your Booking ID: " + bookingID + " is now updated for the lesson: " + lessonID + Utils.ANSI_RESET);
@@ -367,7 +368,7 @@ public class Runner {
                         throw new Utils.CustomValidationException("");
                     }
                     case "grade_level_error" -> {
-                        Learner learner = Manager.learnersHashMap.get(learnerID);
+                        Learner learner = getManagerInstance().learnersHashMap.get(learnerID);
                         System.out.println(Utils.ANSI_RED + "\nThe learner's current grade level is " + learner.getCurrentGradeLevel() + Utils.ANSI_RESET +
                                 "\nThe learner can book a lesson only of his/her current grade level" +
                                 " or a grade level +1.");
@@ -389,6 +390,6 @@ public class Runner {
         }
     }
     public static void displayLearnersList() {
-        Manager.printLearnersList();
+        getManagerInstance().printLearnersList();
     }
 }

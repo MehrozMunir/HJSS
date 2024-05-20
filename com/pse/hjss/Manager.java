@@ -19,6 +19,15 @@ public class Manager {
     public static HashMap<Integer, Lesson> lessonsHashMap = new HashMap<>();
     public static ArrayList<String> coachesNamesArrayList = new ArrayList<>();
     public static final String BOOKING_MONTH ="05";
+
+    private static Manager managerInstance;
+    private Manager(){
+    }
+    public static Manager getManagerInstance(){
+        if (managerInstance == null)
+            managerInstance = new Manager();
+        return managerInstance;
+    }
     public static int generateLearnerID() {
         // Increment the counter for the next learner
         return LEARNER_ID_GENERATOR.getAndIncrement();
